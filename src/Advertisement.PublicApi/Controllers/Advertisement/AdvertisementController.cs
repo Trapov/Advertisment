@@ -15,12 +15,4 @@ namespace Advertisement.PublicApi.Controllers.Advertisement
         
         public AdvertisementController(IAdService adService) => _adService = adService;
     }
-    
-    // public sealed class AdvertisementDto
-    // {
-    //     public int Id { get; set; }
-    //     public string Name { get; set; }
-    //     public decimal Price { get; set; }
-    //     public int UserId { get; set; }
-    // }
 }

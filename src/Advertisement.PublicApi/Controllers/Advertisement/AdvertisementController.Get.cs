@@ -21,10 +21,6 @@ namespace Advertisement.PublicApi.Controllers.Advertisement
             }, cancellationToken);
 
             return Ok(result);
-            // return Advertisements.Select(advertisement => advertisement.ToDto())
-            //     .Skip(request.Offset)
-            //     .Take(request.Limit)
-            //     .ToList();
         }
 
         [HttpGet("{id}")]
@@ -38,9 +34,6 @@ namespace Advertisement.PublicApi.Controllers.Advertisement
             }, cancellationToken);
 
             return Ok(found);
-
-            // return Advertisements
-            //     .First(advertisement => advertisement.Id == id).ToDto();
         }
 
         public class GetAllRequest

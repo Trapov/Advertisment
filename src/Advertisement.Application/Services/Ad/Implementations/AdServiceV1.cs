@@ -30,12 +30,7 @@ namespace Advertisement.Application.Services.Ad.Implementations
                 Price = request.Price,
                 Status = Domain.Ad.Statuses.Created,
                 OwnerId = user.Id,
-                // Owner = new Domain.User
-                // {
-                //     Id = user.Id
-                // },
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow
             };
             await _repository.Save(ad, cancellationToken);
 
@@ -43,6 +38,20 @@ namespace Advertisement.Application.Services.Ad.Implementations
             {
                 Id = ad.Id
             };
+        }
+
+        public async Task Pay(Pay.Request request, CancellationToken cancellationToken)
+        {
+            var ad = await _repository.FindById(request.Id, cancellationToken);
+
+            if (ad == null)
+            {
+                throw new AdNotFoundException(request.Id);
+            }
+
+            ad.Status = Domain.Ad.Statuses.Payed;
+            ad.UpdatedAt = DateTime.UtcNow;
+            await _repository.Save(ad, cancellationToken);
         }
 
         public async Task Delete(Delete.Request request, CancellationToken cancellationToken)
@@ -111,6 +120,7 @@ namespace Advertisement.Application.Services.Ad.Implementations
             {
                 Items = ads.Select(ad => new GetPaged.Response.AdResponse
                 {
+                    Id = ad.Id,
                     Name = ad.Name,
                     Price = ad.Price,
                     Status = ad.Status.ToString()

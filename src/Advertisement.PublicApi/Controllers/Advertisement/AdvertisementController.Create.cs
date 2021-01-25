@@ -21,24 +21,6 @@ namespace Advertisement.PublicApi.Controllers.Advertisement
                 Price = request.Price
             }, cancellationToken);
             
-            // var userDto = HttpContext.User.ToDto();
-            //
-            // var user = UserController.Users.FirstOrDefault(u => u.Id == userDto.Id);
-            // if (user == null)
-            // {
-            //     return BadRequest($"Не существует пользователя с Id: {userDto.Id}");
-            // }
-            //
-            // var advertisement = new Advertisement
-            // {
-            //     Id = Advertisements.Count + 1,
-            //     User = user,
-            //     Name = request.Name,
-            //     Price = request.Price
-            // };
-            //
-            // Advertisements.Add(advertisement);
-
             return Created($"api/v1/advertisements/{response.Id}", new {});
         }
 

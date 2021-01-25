@@ -32,30 +32,6 @@ namespace Advertisement.PublicApi.Controllers.User
             }, cancellationToken);
 
             return Ok(token);
-            // var user = Users.FirstOrDefault(u => u.Name == request.UserName && u.Password == request.Password);
-            //
-            // if (user == null)
-            // {
-            //     return Unauthorized();
-            // }
-            //
-            // var claims = new List<Claim>
-            // {
-            //     new(ClaimTypes.Name, user.Name),
-            //     new(ClaimTypes.NameIdentifier, user.Id.ToString()) 
-            // };
-            //
-            // var token = new JwtSecurityToken
-            // (
-            //     claims: claims,
-            //     expires: DateTime.UtcNow.AddDays(60),
-            //     notBefore: DateTime.UtcNow,
-            //     signingCredentials: new SigningCredentials(
-            //         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"])),
-            //         SecurityAlgorithms.HmacSha256)
-            // );
-            //
-            // return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
         public class UserLoginRequest

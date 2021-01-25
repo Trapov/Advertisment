@@ -1,5 +1,13 @@
 ﻿namespace Advertisement.Application.Services.Ad.Contracts
 {
+    public static class Pay
+    {
+        public sealed class Request
+        {
+            public int Id { get; set; }
+        }
+    }
+    
     public static class Get
     {
         public sealed class Request

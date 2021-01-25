@@ -3,6 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Advertisement.Domain.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Advertisement.PublicApi.Controllers
@@ -10,12 +11,14 @@ namespace Advertisement.PublicApi.Controllers
     public class ApplicationExceptionHandler
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ApplicationExceptionHandler> _logger;
         private readonly ApplicationExceptionOptions _options;
         
         public ApplicationExceptionHandler(RequestDelegate next,
-            IOptions<ApplicationExceptionOptions> options)
+            IOptions<ApplicationExceptionOptions> options, ILogger<ApplicationExceptionHandler> logger)
         {
             _next = next;
+            _logger = logger;
             _options = options.Value;
         }
         
@@ -27,6 +30,8 @@ namespace Advertisement.PublicApi.Controllers
             }
             catch (DomainException domainException)
             {
+                _logger.LogError(domainException, "Прозошло доменное исключение.");
+                    
                 context.Response.StatusCode = (int)ObtainStatusCode(domainException);
                 await context.Response.WriteAsJsonAsync(new
                 {
@@ -36,6 +41,8 @@ namespace Advertisement.PublicApi.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "Произошло общее исключение.");
+
                 context.Response.StatusCode = _options.DefaultErrorStatusCode;
                 await context.Response.WriteAsJsonAsync(new
                 {
@@ -45,7 +52,7 @@ namespace Advertisement.PublicApi.Controllers
             }
         }
 
-        private HttpStatusCode ObtainStatusCode(DomainException domainException)
+        private static HttpStatusCode ObtainStatusCode(DomainException domainException)
         {
             return domainException switch
             {

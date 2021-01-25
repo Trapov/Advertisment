@@ -66,7 +66,7 @@ namespace Advertisement.Application.Services.User.Implementations
                 UpdatedAt = DateTime.UtcNow
             };
 
-            var userInRepo =await _repository.FindWhere(u => u.Name == registerRequest.Name, cancellationToken);
+            var userInRepo = await _repository.FindWhere(u => u.Name == registerRequest.Name, cancellationToken);
             if (userInRepo != null)
             {
                 throw new ConflictException("Пользователь с таким именем уже зарегестрирован!");
@@ -106,7 +106,8 @@ namespace Advertisement.Application.Services.User.Implementations
                 notBefore: DateTime.UtcNow,
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"])),
-                    SecurityAlgorithms.HmacSha256)
+                    SecurityAlgorithms.HmacSha256
+                )
             );
 
             return new Login.Response

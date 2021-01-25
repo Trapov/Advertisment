@@ -29,20 +29,6 @@ namespace Advertisement.PublicApi.Controllers.User
                 Password = request.Password
             }, cancellationToken);
             
-            // if (Users.Exists(u => u.Name == request.Name))
-            // {
-            //     return Conflict("Пользователь с таким именем уже существует");
-            // }
-            //
-            // var user = new User
-            // {
-            //     Id = Users.Count + 1,
-            //     Name = request.Name,
-            //     Password = request.Password
-            // };
-            //
-            // Users.Add(user);
-            //
             return Created($"api/v1/users/{user.UserId}", new {});
         }
     }
