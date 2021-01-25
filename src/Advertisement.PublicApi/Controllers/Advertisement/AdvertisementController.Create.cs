@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Advertisement.Application.Services.Ad.Contracts;
 using Advertisement.PublicApi.Controllers.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,27 +13,33 @@ namespace Advertisement.PublicApi.Controllers.Advertisement
     {
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public IActionResult Create(AdvertisementCreateRequest request)
+        public async Task<IActionResult> Create(AdvertisementCreateRequest request, CancellationToken cancellationToken)
         {
-            var userDto = HttpContext.User.ToDto();
-            
-            var user = UserController.Users.FirstOrDefault(u => u.Id == userDto.Id);
-            if (user == null)
+            var response = await _adService.Create(new Create.Request
             {
-                return BadRequest($"Не существует пользователя с Id: {userDto.Id}");
-            }
-
-            var advertisement = new Advertisement
-            {
-                Id = Advertisements.Count + 1,
-                User = user,
                 Name = request.Name,
                 Price = request.Price
-            };
+            }, cancellationToken);
             
-            Advertisements.Add(advertisement);
+            // var userDto = HttpContext.User.ToDto();
+            //
+            // var user = UserController.Users.FirstOrDefault(u => u.Id == userDto.Id);
+            // if (user == null)
+            // {
+            //     return BadRequest($"Не существует пользователя с Id: {userDto.Id}");
+            // }
+            //
+            // var advertisement = new Advertisement
+            // {
+            //     Id = Advertisements.Count + 1,
+            //     User = user,
+            //     Name = request.Name,
+            //     Price = request.Price
+            // };
+            //
+            // Advertisements.Add(advertisement);
 
-            return Created($"api/v1/advertisements/{advertisement.Id}", advertisement.ToDto());
+            return Created($"api/v1/advertisements/{response.Id}", new {});
         }
 
         public sealed class AdvertisementCreateRequest

@@ -1,8 +1,8 @@
 ﻿namespace Advertisement.Domain.Shared.Exceptions
 {
-    public abstract class ConflictException : DomainException
+    public class ConflictException : DomainException
     {
-        protected ConflictException(string message) : base(message)
+        public ConflictException(string message) : base(message)
         {
         }
     }

@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
+using Advertisement.Application.Services.User.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,23 +21,29 @@ namespace Advertisement.PublicApi.Controllers.User
 
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public IActionResult Register(UserRegisterRequest request)
+        public async Task<IActionResult> Register(UserRegisterRequest request, CancellationToken cancellationToken)
         {
-            if (Users.Exists(u => u.Name == request.Name))
+            var user = await _userService.Register(new Register.Request
             {
-                return Conflict("Пользователь с таким именем уже существует");
-            }
-            
-            var user = new User
-            {
-                Id = Users.Count + 1,
                 Name = request.Name,
                 Password = request.Password
-            };
-
-            Users.Add(user);
+            }, cancellationToken);
             
-            return Created($"api/v1/users/{user.Id}", user.ToDto());
+            // if (Users.Exists(u => u.Name == request.Name))
+            // {
+            //     return Conflict("Пользователь с таким именем уже существует");
+            // }
+            //
+            // var user = new User
+            // {
+            //     Id = Users.Count + 1,
+            //     Name = request.Name,
+            //     Password = request.Password
+            // };
+            //
+            // Users.Add(user);
+            //
+            return Created($"api/v1/users/{user.UserId}", new {});
         }
     }
 }

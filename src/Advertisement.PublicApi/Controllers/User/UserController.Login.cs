@@ -5,6 +5,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Advertisement.Application.Services.User.Contracts;
+using Advertisement.Application.Services.User.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -13,40 +17,45 @@ namespace Advertisement.PublicApi.Controllers.User
 {
     public partial class UserController
     {
-        private readonly IConfiguration _configuration;
-
-        public UserController(IConfiguration configuration)
+        public UserController(IUserService userService)
         {
-            _configuration = configuration;
+            _userService = userService;
         }
         
         [HttpPost("login")]
-        public IActionResult Login(UserLoginRequest request)
+        public async Task<IActionResult> Login(UserLoginRequest request, CancellationToken cancellationToken)
         {
-            var user = Users.FirstOrDefault(u => u.Name == request.UserName && u.Password == request.Password);
-
-            if (user == null)
+            var token = await _userService.Login(new Login.Request
             {
-                return Unauthorized();
-            }
+                Name = request.UserName,
+                Password = request.Password
+            }, cancellationToken);
 
-            var claims = new List<Claim>
-            {
-                new(ClaimTypes.Name, user.Name),
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()) 
-            };
-            
-            var token = new JwtSecurityToken
-            (
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(60),
-                notBefore: DateTime.UtcNow,
-                signingCredentials: new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"])),
-                    SecurityAlgorithms.HmacSha256)
-            );
-
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+            return Ok(token);
+            // var user = Users.FirstOrDefault(u => u.Name == request.UserName && u.Password == request.Password);
+            //
+            // if (user == null)
+            // {
+            //     return Unauthorized();
+            // }
+            //
+            // var claims = new List<Claim>
+            // {
+            //     new(ClaimTypes.Name, user.Name),
+            //     new(ClaimTypes.NameIdentifier, user.Id.ToString()) 
+            // };
+            //
+            // var token = new JwtSecurityToken
+            // (
+            //     claims: claims,
+            //     expires: DateTime.UtcNow.AddDays(60),
+            //     notBefore: DateTime.UtcNow,
+            //     signingCredentials: new SigningCredentials(
+            //         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"])),
+            //         SecurityAlgorithms.HmacSha256)
+            // );
+            //
+            // return Ok(new JwtSecurityTokenHandler().WriteToken(token));
         }
 
         public class UserLoginRequest

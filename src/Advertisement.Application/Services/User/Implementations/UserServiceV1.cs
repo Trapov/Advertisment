@@ -66,6 +66,12 @@ namespace Advertisement.Application.Services.User.Implementations
                 UpdatedAt = DateTime.UtcNow
             };
 
+            var userInRepo =await _repository.FindWhere(u => u.Name == registerRequest.Name, cancellationToken);
+            if (userInRepo != null)
+            {
+                throw new ConflictException("Пользователь с таким именем уже зарегестрирован!");
+            }
+            
             await _repository.Save(user, cancellationToken);
 
             return new Register.Response
