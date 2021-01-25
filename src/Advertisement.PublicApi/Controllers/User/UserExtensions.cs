@@ -19,7 +19,7 @@ namespace Advertisement.PublicApi.Controllers.User
 
         public static UserController.UserDto ToDto(this ClaimsPrincipal principal)
         {
-            return new UserController.UserDto
+            return new()
             {
                 Id = int.Parse(principal.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value),
                 Name = principal.Claims.First(c => c.Type == ClaimTypes.Name).Value

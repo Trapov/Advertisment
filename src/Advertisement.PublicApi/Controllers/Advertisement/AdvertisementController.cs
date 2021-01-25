@@ -10,28 +10,22 @@ namespace Advertisement.PublicApi.Controllers.Advertisement
     [Authorize]
     public partial class AdvertisementController : ControllerBase
     {
-        public static readonly List<Advertisement> Advertisements = new List<Advertisement>();
+        public static readonly List<Advertisement> Advertisements = new();
     }
 
     public sealed class Advertisement
     {
         public int Id { get; set; }
-        
         public string Name { get; set; }
-        
         public decimal Price { get; set; }
-        
         public UserController.User User { get; set; }
     }
     
     public sealed class AdvertisementDto
     {
         public int Id { get; set; }
-        
         public string Name { get; set; }
-        
         public decimal Price { get; set; }
-        
         public int UserId { get; set; }
     }
 }

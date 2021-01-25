@@ -32,8 +32,8 @@ namespace Advertisement.PublicApi.Controllers.User
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()) 
+                new(ClaimTypes.Name, user.Name),
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()) 
             };
             
             var token = new JwtSecurityToken

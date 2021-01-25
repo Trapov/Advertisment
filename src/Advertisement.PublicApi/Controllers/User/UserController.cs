@@ -9,7 +9,7 @@ namespace Advertisement.PublicApi.Controllers.User
     [AllowAnonymous]
     public partial class UserController : ControllerBase
     {
-        public static readonly List<User> Users = new List<User>();
+        public static readonly List<User> Users = new();
 
         public sealed class User
         {

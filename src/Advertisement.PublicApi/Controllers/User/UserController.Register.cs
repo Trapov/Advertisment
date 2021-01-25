@@ -6,7 +6,7 @@ namespace Advertisement.PublicApi.Controllers.User
 {
     public partial class UserController
     {
-        public class UserRegisterRequest
+        public sealed class UserRegisterRequest
         {
             [Required]
             [MaxLength(30, ErrorMessage = "Максимальная длина имени не должна превышать 30 символов")]
