@@ -27,6 +27,7 @@ namespace Advertisement.PublicApi
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(type => type.FullName.Replace("+", "_"));
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "PublicApi", Version = "v1"});
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
