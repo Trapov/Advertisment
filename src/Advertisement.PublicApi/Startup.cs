@@ -1,5 +1,12 @@
 using System.Collections.Generic;
 using System.Text;
+using Advertisement.Application;
+using Advertisement.Application.Services.Ad.Implementations;
+using Advertisement.Application.Services.Ad.Interfaces;
+using Advertisement.Application.Services.User.Implementations;
+using Advertisement.Application.Services.User.Interfaces;
+using Advertisement.Domain;
+using Advertisement.Infrastructure.DataAccess;
 using Advertisement.PublicApi.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -25,6 +32,16 @@ namespace Advertisement.PublicApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSingleton(new InMemoryRepository());
+            services.AddSingleton<IRepository<User, int>>(sp => sp.GetService<InMemoryRepository>());
+            services.AddSingleton<IRepository<Ad, int>>(sp => sp.GetService<InMemoryRepository>());
+
+            services.AddScoped<IAdService, AdServiceV1>();
+            services.AddScoped<IUserService, UserServiceV1>();
+
+            services.AddHttpContextAccessor();
+            
             services.AddSwaggerGen(c =>
             {
                 c.CustomSchemaIds(type => type.FullName.Replace("+", "_"));
@@ -74,7 +91,7 @@ namespace Advertisement.PublicApi
                     };
                 });
 
-            services.AddApplicationException(config => { config.DefaultStatusCode = 500; });
+            services.AddApplicationException(config => { config.DefaultErrorStatusCode = 500; });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

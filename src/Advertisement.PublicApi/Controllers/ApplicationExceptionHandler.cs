@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using Advertisement.Domain.Shared.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -23,16 +25,40 @@ namespace Advertisement.PublicApi.Controllers
             {
                 await _next(context);
             }
+            catch (DomainException domainException)
+            {
+                context.Response.StatusCode = (int)ObtainStatusCode(domainException);
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    TraceId = context.TraceIdentifier,
+                    Error = domainException.Message,
+                }, context.RequestAborted);
+            }
             catch (Exception e)
             {
-                context.Response.StatusCode = _options.DefaultStatusCode;
-                await context.Response.WriteAsync("Во врем выполнения приложения произошла ошибка");
+                context.Response.StatusCode = _options.DefaultErrorStatusCode;
+                await context.Response.WriteAsJsonAsync(new
+                {
+                    TraceId = context.TraceIdentifier,
+                    Error = "Произошла ошибка"
+                }, context.RequestAborted);
             }
+        }
+
+        private HttpStatusCode ObtainStatusCode(DomainException domainException)
+        {
+            return domainException switch
+            {
+                NotFoundException => HttpStatusCode.NotFound,
+                ConflictException => HttpStatusCode.Conflict,
+                NoRightsException => HttpStatusCode.Forbidden,
+                _ => throw new ArgumentOutOfRangeException(nameof(domainException), domainException, null)
+            };
         }
     }
 
     public class ApplicationExceptionOptions
     {
-        public int DefaultStatusCode { get; set; } = StatusCodes.Status500InternalServerError;
+        public int DefaultErrorStatusCode { get; set; } = StatusCodes.Status500InternalServerError;
     }
 }
