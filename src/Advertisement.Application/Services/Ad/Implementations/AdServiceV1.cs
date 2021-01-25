@@ -29,10 +29,11 @@ namespace Advertisement.Application.Services.Ad.Implementations
                 Name = request.Name,
                 Price = request.Price,
                 Status = Domain.Ad.Statuses.Created,
-                Owner = new Domain.User
-                {
-                    Id = user.Id
-                },
+                OwnerId = user.Id,
+                // Owner = new Domain.User
+                // {
+                //     Id = user.Id
+                // },
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -78,7 +79,9 @@ namespace Advertisement.Application.Services.Ad.Implementations
                 {
                     Id = ad.Owner.Id,
                     Name = ad.Owner.Name
-                }
+                },
+                Price = ad.Price,
+                Status = ad.Status.ToString()
             };
         }
 
