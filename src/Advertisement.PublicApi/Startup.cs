@@ -1,22 +1,12 @@
-using System.Collections.Generic;
 using System.Text;
-using Advertisement.Application;
-using Advertisement.Application.Services.Ad.Implementations;
-using Advertisement.Application.Services.Ad.Interfaces;
-using Advertisement.Application.Services.User.Implementations;
-using Advertisement.Application.Services.User.Interfaces;
-using Advertisement.Domain;
 using Advertisement.Infrastructure;
-using Advertisement.Infrastructure.DataAccess;
 using Advertisement.PublicApi.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 namespace Advertisement.PublicApi
 {
@@ -36,6 +26,8 @@ namespace Advertisement.PublicApi
 
             services
                 .AddApplicationModule()
+                .AddHttpContextAccessor()
+                .AddInfrastructureModule(configuration => configuration.IdentityFromHttpContext())
                 .AddDataAccessModule(configuration => configuration.InMemory());
 
             services.AddHttpContextAccessor();

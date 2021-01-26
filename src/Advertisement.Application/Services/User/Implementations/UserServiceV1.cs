@@ -10,7 +10,6 @@ using Advertisement.Application.Services.User.Contracts;
 using Advertisement.Application.Services.User.Contracts.Exceptions;
 using Advertisement.Application.Services.User.Interfaces;
 using Advertisement.Domain.Shared.Exceptions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,26 +18,20 @@ namespace Advertisement.Application.Services.User.Implementations
     public sealed class UserServiceV1 : IUserService
     {
         private readonly IRepository<Domain.User, int> _repository;
-        private readonly IHttpContextAccessor _contextAccessor;
-
+        private readonly IClaimsAccessor _claimsAccessor;
         private readonly IConfiguration _configuration;
 
-        public UserServiceV1(IRepository<Domain.User, int> repository, IHttpContextAccessor contextAccessor, IConfiguration configuration)
+        public UserServiceV1(IRepository<Domain.User, int> repository,  IConfiguration configuration, IClaimsAccessor claimsAccessor)
         {
             _repository = repository;
-            _contextAccessor = contextAccessor;
             _configuration = configuration;
+            _claimsAccessor = claimsAccessor;
         }
 
         public async Task<Domain.User> GetCurrent(CancellationToken cancellationToken)
         {
-            var id = 
-                _contextAccessor
-                    .HttpContext
-                    .User
-                    .Claims
-                    .FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)
-                ?.Value;
+            var claims = await _claimsAccessor.GetClaims(cancellationToken);
+            var id = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrWhiteSpace(id))
             {
