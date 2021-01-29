@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Advertisement.Application.Repositories;
 using Advertisement.Application.Services.Ad.Contracts;
 using Advertisement.Application.Services.Ad.Contracts.Exceptions;
 using Advertisement.Application.Services.Ad.Interfaces;

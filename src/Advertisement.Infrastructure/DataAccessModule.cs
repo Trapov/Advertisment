@@ -1,8 +1,12 @@
 ﻿using System;
-using Advertisement.Application;
+using Advertisement.Application.Repositories;
 using Advertisement.Domain;
 using Advertisement.Infrastructure.DataAccess;
+using Advertisement.Infrastructure.DataAccess.Repositories;
+using Advertisement.Infrastructure.Migrations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using InMemoryRepository = Advertisement.Infrastructure.DataAccess.Repositories.InMemoryRepository;
 
 namespace Advertisement.Infrastructure
 {
@@ -31,6 +35,21 @@ namespace Advertisement.Infrastructure
             moduleConfiguration.Services.AddSingleton(new InMemoryRepository());
             moduleConfiguration.Services.AddSingleton<IRepository<User, int>>(sp => sp.GetService<InMemoryRepository>());
             moduleConfiguration.Services.AddSingleton<IRepository<Ad, int>>(sp => sp.GetService<InMemoryRepository>());
+        }
+        
+        public static void InSqlServer(this ModuleConfiguration moduleConfiguration, string connectionString)
+        {
+            moduleConfiguration.Services.AddDbContextPool<DatabaseContext>(options =>
+            {
+                options.UseSqlServer(connectionString, builder =>
+                    builder.MigrationsAssembly(
+                        //typeof( DataAccessModule).Assembly.FullName)
+                        typeof(DatabaseContextModelSnapshot).Assembly.FullName)
+                    );
+            });
+            
+            moduleConfiguration.Services.AddScoped<IRepository<Ad, int>, EfRepository<Ad, int>>();
+            moduleConfiguration.Services.AddScoped<IRepository<User,int>, EfRepository<User,int>>();
         }
     }
 }

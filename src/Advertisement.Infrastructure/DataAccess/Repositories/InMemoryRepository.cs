@@ -5,10 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Advertisement.Application;
+using Advertisement.Application.Repositories;
 using Advertisement.Domain;
 
-namespace Advertisement.Infrastructure.DataAccess
+namespace Advertisement.Infrastructure.DataAccess.Repositories
 {
     public sealed class InMemoryRepository : 
         IRepository<Ad, int>,

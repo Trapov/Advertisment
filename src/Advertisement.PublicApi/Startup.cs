@@ -1,9 +1,11 @@
 using System.Text;
 using Advertisement.Infrastructure;
+using Advertisement.Infrastructure.DataAccess;
 using Advertisement.PublicApi.Controllers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -28,7 +30,9 @@ namespace Advertisement.PublicApi
                 .AddApplicationModule()
                 .AddHttpContextAccessor()
                 .AddInfrastructureModule(configuration => configuration.IdentityFromHttpContext())
-                .AddDataAccessModule(configuration => configuration.InMemory());
+                .AddDataAccessModule(configuration => //configuration.InMemory()
+                    configuration.InSqlServer(Configuration.GetConnectionString("SqlServerDb")) 
+                    );
 
             services.AddHttpContextAccessor();
 
@@ -55,6 +59,10 @@ namespace Advertisement.PublicApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            using var scope = app.ApplicationServices.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            db.Database.Migrate();
+            
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PublicApi v1"));
             app.UseApplicationException();

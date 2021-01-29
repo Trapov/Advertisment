@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Advertisement.Application.Repositories;
 using Advertisement.Application.Services.User.Contracts;
 using Advertisement.Application.Services.User.Contracts.Exceptions;
 using Advertisement.Application.Services.User.Interfaces;
