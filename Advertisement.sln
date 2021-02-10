@@ -13,6 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Advertisement.Application",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Advertisement.Infrastructure", "src\Advertisement.Infrastructure\Advertisement.Infrastructure.csproj", "{83DDC601-ABDD-4D3C-890E-1741F8794A5F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{A3636182-F4BF-4582-B957-F22CAC1C91DF}"
+ProjectSection(SolutionItems) = preProject
+	.gitignore = .gitignore
+	docker-compose.yml = docker-compose.yml
+	nuget.config = nuget.config
+	README.md = README.md
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

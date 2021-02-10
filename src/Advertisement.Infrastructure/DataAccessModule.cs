@@ -16,7 +16,7 @@ namespace Advertisement.Infrastructure
         {
             public IServiceCollection Services { get; init; }
         }
-        
+
         public static IServiceCollection AddDataAccessModule(
             this IServiceCollection services,
             Action<ModuleConfiguration> action
@@ -33,10 +33,11 @@ namespace Advertisement.Infrastructure
         public static void InMemory(this ModuleConfiguration moduleConfiguration)
         {
             moduleConfiguration.Services.AddSingleton(new InMemoryRepository());
-            moduleConfiguration.Services.AddSingleton<IRepository<User, int>>(sp => sp.GetService<InMemoryRepository>());
+            moduleConfiguration.Services.AddSingleton<IRepository<User, int>>(sp =>
+                sp.GetService<InMemoryRepository>());
             moduleConfiguration.Services.AddSingleton<IRepository<Ad, int>>(sp => sp.GetService<InMemoryRepository>());
         }
-        
+
         public static void InSqlServer(this ModuleConfiguration moduleConfiguration, string connectionString)
         {
             moduleConfiguration.Services.AddDbContextPool<DatabaseContext>(options =>
@@ -45,11 +46,12 @@ namespace Advertisement.Infrastructure
                     builder.MigrationsAssembly(
                         //typeof( DataAccessModule).Assembly.FullName)
                         typeof(DatabaseContextModelSnapshot).Assembly.FullName)
-                    );
+                );
             });
-            
+
             moduleConfiguration.Services.AddScoped<IRepository<Ad, int>, EfRepository<Ad, int>>();
-            moduleConfiguration.Services.AddScoped<IRepository<User,int>, EfRepository<User,int>>();
+            moduleConfiguration.Services.AddScoped<IRepository<User, int>, EfRepository<User, int>>();
         }
+
     }
 }

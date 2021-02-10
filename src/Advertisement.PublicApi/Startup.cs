@@ -31,8 +31,9 @@ namespace Advertisement.PublicApi
                 .AddHttpContextAccessor()
                 .AddInfrastructureModule(configuration => configuration.IdentityFromHttpContext())
                 .AddDataAccessModule(configuration => //configuration.InMemory()
-                    configuration.InSqlServer(Configuration.GetConnectionString("SqlServerDb")) 
-                    );
+                    //configuration.InSqlServer(Configuration.GetConnectionString("SqlServerDb"))
+                    configuration.InSqlServer(Configuration.GetConnectionString("mssql"))
+                );
 
             services.AddHttpContextAccessor();
 
@@ -59,6 +60,7 @@ namespace Advertisement.PublicApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //Init migrations
             using var scope = app.ApplicationServices.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
             db.Database.Migrate();

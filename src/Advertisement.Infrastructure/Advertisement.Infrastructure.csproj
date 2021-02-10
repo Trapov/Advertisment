@@ -6,7 +6,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Advertisement.Application\Advertisement.Application.csproj" />
-      <ProjectReference Include="..\Advertisement.DataAccess\Advertisement.DataAccess.csproj" />
     </ItemGroup>
 
     <ItemGroup>
