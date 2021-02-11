@@ -65,7 +65,7 @@ namespace Advertisement.Infrastructure.DataAccess.Repositories
         {
             var data = _dbСontext.Set<TEntity>();
 
-            return await data.Take(limit).Skip(offset).OrderBy(e => e.Id).ToListAsync(cancellationToken);
+            return await data.OrderBy(e => e.Id).Take(limit).Skip(offset).ToListAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<TEntity>> GetPaged(Expression<Func<TEntity, bool>> predicate, int offset,
@@ -73,7 +73,7 @@ namespace Advertisement.Infrastructure.DataAccess.Repositories
         {
             var data = _dbСontext.Set<TEntity>();
 
-            return await data.Where(predicate).Take(limit).Skip(offset).OrderBy(e => e.Id)
+            return await data.Where(predicate).OrderBy(e => e.Id).Take(limit).Skip(offset)
                 .ToListAsync(cancellationToken);
         }
     }

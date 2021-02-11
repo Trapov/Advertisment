@@ -26,15 +26,20 @@ namespace Advertisement.PublicApi
         {
             services.AddControllers();
 
+           
             services
                 .AddApplicationModule()
                 .AddHttpContextAccessor()
                 .AddInfrastructureModule(configuration => configuration.IdentityFromHttpContext())
-                .AddDataAccessModule(configuration => //configuration.InMemory()
-                    //configuration.InSqlServer(Configuration.GetConnectionString("SqlServerDb"))
-                    configuration.InSqlServer(Configuration.GetConnectionString("mssql"))
+                
+                
+                .AddDataAccessModule(configuration => 
+                    //configuration.InMemory()
+                    configuration.InSqlServer(Configuration.GetConnectionString("SqlServerDb"))
+                    //configuration.InPostgress(Configuration.GetConnectionString("PostgresDb"))
                 );
 
+         
             services.AddHttpContextAccessor();
 
             services.AddSwaggerModule();
