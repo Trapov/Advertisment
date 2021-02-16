@@ -13,10 +13,10 @@ namespace Advertisement.Application.Services.Ad.Implementations
 {
     public sealed class AdServiceV1 : IAdService
     {
-        private readonly IRepository<Domain.Ad, int> _repository;
+        private readonly IAdRepository _repository;
         private readonly IUserService _userService;
 
-        public AdServiceV1(IUserService userService, IRepository<Domain.Ad, int> repository)
+        public AdServiceV1(IUserService userService, IAdRepository repository)
         {
             _userService = userService;
             _repository = repository;
@@ -57,7 +57,7 @@ namespace Advertisement.Application.Services.Ad.Implementations
 
         public async Task Delete(Delete.Request request, CancellationToken cancellationToken)
         {
-            var ad = await _repository.FindById(request.Id, cancellationToken);
+            var ad = await _repository.FindByIdWithUserInclude(request.Id, cancellationToken);
             if (ad == null)
             {
                 throw new AdNotFoundException(request.Id);
@@ -76,7 +76,7 @@ namespace Advertisement.Application.Services.Ad.Implementations
 
         public async Task<Get.Response> Get(Get.Request request, CancellationToken cancellationToken)
         {
-            var ad = await _repository.FindById(request.Id, cancellationToken);
+            var ad = await _repository.FindByIdWithUserInclude(request.Id, cancellationToken);
             if (ad == null)
             {
                 throw new AdNotFoundException(request.Id);

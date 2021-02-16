@@ -5,50 +5,67 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Advertisement.Application.Repositories;
+using Advertisement.Application.Services.Ad.Interfaces;
+using Advertisement.Domain;
 using Advertisement.Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 
 namespace Advertisement.Infrastructure.DataAccess.Repositories
 {
+    public sealed class AdRepository : EfRepository<Domain.Ad, int>, IAdRepository
+    {
+        public AdRepository(DatabaseContext dbСontext) : base(dbСontext)
+        {
+        }
+
+        public async Task<Ad> FindByIdWithUserInclude(int id, CancellationToken cancellationToken)
+        {
+            return await DbСontext
+                .Set<Ad>()
+                .Include(a => a.Owner)
+                .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        }
+    }
+    
     public class EfRepository<TEntity, TId>
         : IRepository<TEntity, TId>
         where TEntity : Entity<TId>
     {
 
-        private readonly DatabaseContext _dbСontext;
+        protected readonly DatabaseContext DbСontext;
 
         public EfRepository(DatabaseContext dbСontext)
         {
-            _dbСontext = dbСontext;
+            DbСontext = dbСontext;
         }
 
         public async Task<TEntity> FindById(TId id, CancellationToken cancellationToken)
         {
-            return await _dbСontext.FindAsync<TEntity>(new object[] {id}, cancellationToken: cancellationToken);
+            return await DbСontext.FindAsync<TEntity>(new object[] {id}, cancellationToken: cancellationToken);
         }
 
         public async Task Save(TEntity entity, CancellationToken cancellationToken)
         {
-            var entry = _dbСontext.Entry(entity);
+            var entry = DbСontext.Entry(entity);
             if (entry.State == EntityState.Detached)
             {
-                await _dbСontext.AddAsync(entity, cancellationToken);
+                await DbСontext.AddAsync(entity, cancellationToken);
             }
 
-            await _dbСontext.SaveChangesAsync(cancellationToken);
+            await DbСontext.SaveChangesAsync(cancellationToken);
         }
 
         public async Task<TEntity> FindWhere(Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellationToken)
         {
-            var data = _dbСontext.Set<TEntity>();
+            var data = DbСontext.Set<TEntity>();
 
             return await data.Where(predicate).FirstOrDefaultAsync(cancellationToken);
         }
 
         public async Task<int> Count(CancellationToken cancellationToken)
         {
-            var data = _dbСontext.Set<TEntity>();
+            var data = DbСontext.Set<TEntity>();
 
             return await data.CountAsync(cancellationToken);
         }
@@ -56,14 +73,14 @@ namespace Advertisement.Infrastructure.DataAccess.Repositories
         public async Task<int> Count(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
         {
 
-            var data = _dbСontext.Set<TEntity>();
+            var data = DbСontext.Set<TEntity>();
 
             return await data.Where(predicate).CountAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<TEntity>> GetPaged(int offset, int limit, CancellationToken cancellationToken)
         {
-            var data = _dbСontext.Set<TEntity>();
+            var data = DbСontext.Set<TEntity>();
 
             return await data.OrderBy(e => e.Id).Take(limit).Skip(offset).ToListAsync(cancellationToken);
         }
@@ -71,7 +88,7 @@ namespace Advertisement.Infrastructure.DataAccess.Repositories
         public async Task<IEnumerable<TEntity>> GetPaged(Expression<Func<TEntity, bool>> predicate, int offset,
             int limit, CancellationToken cancellationToken)
         {
-            var data = _dbСontext.Set<TEntity>();
+            var data = DbСontext.Set<TEntity>();
 
             return await data.Where(predicate).OrderBy(e => e.Id).Take(limit).Skip(offset)
                 .ToListAsync(cancellationToken);

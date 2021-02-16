@@ -1,5 +1,6 @@
 ﻿using System;
 using Advertisement.Application.Repositories;
+using Advertisement.Application.Services.Ad.Interfaces;
 using Advertisement.Domain;
 using Advertisement.Infrastructure.DataAccess;
 using Advertisement.Infrastructure.DataAccess.Repositories;
@@ -43,29 +44,30 @@ namespace Advertisement.Infrastructure
             moduleConfiguration.Services.AddDbContextPool<DatabaseContext>(options =>
             {
                 options.UseSqlServer(connectionString, builder =>
-                    builder.MigrationsAssembly(
-                        typeof( DataAccessModule).Assembly.FullName)
-                       // typeof(DatabaseContextModelSnapshot).Assembly.FullName)
+                        builder.MigrationsAssembly(
+                            typeof(DataAccessModule).Assembly.FullName)
+                    // typeof(DatabaseContextModelSnapshot).Assembly.FullName)
                 );
             });
-        
-            moduleConfiguration.Services.AddScoped<IRepository<Ad, int>, EfRepository<Ad, int>>();
-            moduleConfiguration.Services.AddScoped<IRepository<User, int>, EfRepository<User, int>>();
+
+            moduleConfiguration.Services.AddScoped(typeof(IRepository<,>), typeof(EfRepository<,>));
+            moduleConfiguration.Services.AddScoped<IAdRepository, AdRepository>();
         }
 
         public static void InPostgress(this ModuleConfiguration moduleConfiguration, string connectionString)
         {
-        moduleConfiguration.Services.AddDbContextPool<DatabaseContext>(options =>
-        {
-            options.UseNpgsql(connectionString, builder =>
-                builder.MigrationsAssembly(
-                    typeof( DataAccessModule).Assembly.FullName)
+            moduleConfiguration.Services.AddDbContextPool<DatabaseContext>(options =>
+            {
+                options.UseNpgsql(connectionString, builder =>
+                        builder.MigrationsAssembly(
+                            typeof(DataAccessModule).Assembly.FullName)
                     //typeof(DatabaseContextModelSnapshot).Assembly.FullName)
-            );
-        });
-        
-        moduleConfiguration.Services.AddScoped<IRepository<Ad, int>, EfRepository<Ad, int>>();
-        moduleConfiguration.Services.AddScoped<IRepository<User, int>, EfRepository<User, int>>();
+                );
+            });
+
+            moduleConfiguration.Services.AddScoped(typeof(IRepository<,>), typeof(EfRepository<,>));
+            moduleConfiguration.Services.AddScoped<IAdRepository, AdRepository>();
+
         }
     }
 }
